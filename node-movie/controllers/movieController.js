@@ -21,6 +21,18 @@ const addToFav = async (req, res, next) => {
 
   const { id, title, img, genre, runtime, summary } = req.body;
 
+  let existingMovies;
+  try {
+    existingMovies = await Fav.findOne({ id });
+  } catch (err) {
+    const error = new HttpError("Adding the movie failed!", 500);
+    return next(error);
+  }
+  if (existingMovies) {
+    const error = new HttpError("Movies is already Added!", 422);
+    return next(error);
+  }
+
   const newFavMov = new Fav({
     id,
     title,
